@@ -9,6 +9,7 @@ import AdminHome from "./components/AdminHome";
 import UserHome from "./components/UserHome";
 import RegisterPage from "./components/RegisterPage";
 import CustomerManagement from "./components/CustomerManagement";
+import ActiveCustomerAcount from "./components/ActiveCustomerAcount"
 import ProductManagement from "./components/ProductManagement";
 import ProductManagementOne from "./components/ProductManagmentOne";
 import AddNewProduct from "./components/AddNewProduct";
@@ -42,12 +43,14 @@ function App() {
     localStorage.removeItem("role");
   };
 */
+  console.log("user : ", user);
+
   return (
     <>
       <NavBar />
       <ToastContainer />
 
-      {user === "admin" || user === "vendor" || user === "csr"? (
+      {user === "admin" ? (
         <Router>
           <Routes>
             <Route path="/adminHome" element={<AdminHome />} />
@@ -64,6 +67,7 @@ function App() {
             <Route path="/paymentManagementone" element={<ProductManagementOne />} />
             <Route path="/paymentManagement" element={<PaymentManagement />} />
             <Route path="/orderReport" element={<OrderReports />} />
+            <Route path="/activecustomerManagement" element={<ActiveCustomerAcount />} />
           </Routes>
         </Router>
       ) : user === "user" ? (
@@ -80,6 +84,26 @@ function App() {
             <Route path="/orderPage" element={<UserOrderPage />} />
             <Route path="/userProfile" element={<UserProfile />} />
             <Route path="/userReview/:orderId" element={<UserReview />} />
+          </Routes>
+        </Router>
+      ) : user === "vendor" ? (
+        <Router>
+          <Routes>
+            <Route path="/adminHome" element={<AdminHome />} />
+            <Route
+              path="/customerManagement"
+              element={<CustomerManagement />}
+            />
+            <Route path="/productManagement" element={<ProductManagement />} />
+            <Route path="/addNewProduct" element={<AddNewProduct />} />
+            <Route path="/editProduct/:productId" element={<EditProduct />} />
+            <Route path="/orderManagement" element={<OrderManagement />} />
+            <Route path="/inquaryManagement" element={<InquearyManagement />} />
+            <Route path="/reviewManagement" element={<ReviewManagement />} />
+            <Route path="/paymentManagementone" element={<ProductManagementOne />} />
+            <Route path="/paymentManagement" element={<PaymentManagement />} />
+            <Route path="/orderReport" element={<OrderReports />} />
+            <Route path="/activecustomerManagement" element={<ActiveCustomerAcount />} />
           </Routes>
         </Router>
       ) : null}

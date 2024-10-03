@@ -54,7 +54,7 @@ export default function NavBar() {
 
           <div className="md:flex md:items-center space-x-4">
             <ul className="flex space-x-4 text-white">
-              {role === "admin" && (
+              {(role === "vendor" || role === "admin" || role === 'csr') && (
                 <>
                   <li className="nav-item">
                     <a className="nav-link" href="/adminHome">

@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
         }
       );
 
-      const data  = response.data.Data;
+      const data = response.data.Data;
 
       console.log(data);
 
@@ -35,6 +35,12 @@ const LoginPage: React.FC = () => {
       if (data.User.Role === "admin") {
         //showSuccessToast("Login successful! Admin");
 
+        showSuccessToast("Login successful!");
+        setTimeout(() => {
+          navigate("/adminHome");
+          window.location.reload();
+        }, 2000);
+      } else if (data.User.Role === "vendor") {
         showSuccessToast("Login successful!");
         setTimeout(() => {
           navigate("/adminHome");

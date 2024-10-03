@@ -30,9 +30,14 @@ const AdminHome: React.FC = () => {
             "/productManagement"
           )}
           {renderCard(
-            "User- Managment",
+            "User - Managment",
             "Manage customer information and interactions",
             "/customerManagement"
+          )}
+          {renderCard(
+            "Active - User Acounts",
+            "Manage customer information and interactions",
+            "/activecustomerManagement"
           )}
           {renderCard(
             "Reports",
