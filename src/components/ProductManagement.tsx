@@ -1,6 +1,11 @@
+//File : Product Inventory.tsx
+//Author : Wickramasinghe T.D.B
+//IT Number : IT21096570
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DashBoardSidBar from "./DashBoardSideBar";
+import emailjs from '@emailjs/browser';
 import { useNavigate } from "react-router-dom";
 import { showSuccessToast } from "./services/AlertService";
 
@@ -39,9 +44,50 @@ const ProductManagement: React.FC = () => {
       );
 
       console.log(response.data.Data);
-
-      // Set the retrieved products in the state
       setProducts(response.data.Data);
+
+      const emailProduct = response.data.Data;
+
+      const shouldSendEmail = (productId: string) => {
+        const lastSent = localStorage.getItem(`lastEmailSent_${productId}`);
+        if (!lastSent) return true;
+
+        const lastSentDate = new Date(parseInt(lastSent));
+        const now = new Date();
+        const hoursSinceLastEmail = (now.getTime() - lastSentDate.getTime()) / (1000 * 60 * 60);
+
+        return hoursSinceLastEmail >= 24;
+      };
+
+      // const sendLowStockEmail = (product: any) => {
+      //   const templateParams = {
+      //     to_name: product.Vendor.FirstName,
+      //     p_name: product.Name,
+      //     p_units: product.Qty,
+      //     send_mail: "thanujadha20@gmail.com"
+      //     // send_mail: product.Vendor.Email
+      //   };
+
+      //   emailjs.send(
+      //     'service_8relxas',
+      //     'template_p347l2o',
+      //     templateParams,
+      //     'nJZ8AUZgP7APdlpQW'
+      //   )
+      //     .then((response) => {
+      //       console.log('Email sent successfully to vendor:', response);
+      //       localStorage.setItem(`lastEmailSent_${product.Id}`, Date.now().toString());
+      //     })
+      //     .catch((error) => {
+      //       console.error('Error sending email to vendor:', error);
+      //     });
+      // }
+
+      emailProduct.forEach((product: any) => {
+        if (product.Qty < 10 && shouldSendEmail(product.Id)) {
+          // sendLowStockEmail(product);
+        }
+      });
 
     } catch (error) {
       console.error("Error fetching product data:", error);
@@ -96,12 +142,6 @@ const ProductManagement: React.FC = () => {
       <main className="flex-1 p-5">
         <div className="flex justify-between mb-3">
           <h1 className="text-3xl font-bold">Product Inventory</h1>
-          {/* <button
-            className="btn btn-success"
-            onClick={handleAddNewProduct}
-          >
-            Add New Product
-          </button> */}
         </div>
         <div className="container mx-auto mt-5">
           <input
@@ -117,6 +157,7 @@ const ProductManagement: React.FC = () => {
                 <th className="px-4 py-2">Product Name</th>
                 <th className="px-4 py-2">Description</th>
                 <th className="px-4 py-2">Category</th>
+                <th className="px-4 py-2">Vendor</th>
                 <th className="px-4 py-2">Price</th>
                 <th className="px-4 py-2">Image</th>
                 <th className="px-4 py-2">Quantity</th>
@@ -146,6 +187,7 @@ const ProductManagement: React.FC = () => {
                     )}
                   </td>
                   <td>{product.Category.Name}</td>
+                  <td>{product.Vendor.FirstName}</td>
                   <td>{product.Price}</td>
                   <td>
                     <img

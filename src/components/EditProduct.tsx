@@ -1,3 +1,7 @@
+//File : Edit Product.txs
+//Author : Wickramasinghe T.D.B
+//IT Number : IT21096570
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import DashBoardSidBar from "./DashBoardSideBar";

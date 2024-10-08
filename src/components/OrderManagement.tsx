@@ -1,14 +1,81 @@
+//File : OrderManagment.tsx
+//Author : Wickramasinghe T.D.B
+//IT Number : IT21096570
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DashBoardSidBar from "./DashBoardSideBar";
 import { showErrorToast, showSuccessToast } from "./services/AlertService";
 import { OrdersData } from "./orderDealer/orderDealer";
 import { Button, Modal } from "react-bootstrap";
+import emailjs from '@emailjs/browser';
+
 
 //import { useNavigate } from "react-router-dom";
 
 const OrderManagement: React.FC = () => {
   const basePath = import.meta.env.VITE_BASE_PATH;
+
+  interface Vendor {
+    id: string | null;
+    FirstName: string;
+    LastName: string;
+    Email: string;
+    Age: number;
+    Password: string | null;
+    Role: string;
+    Status: string | null;
+  }
+
+  interface Product {
+    Id: string;
+    VendorId: string | null;
+    Name: string;
+    Description: string;
+    ImageUrl: string;
+    Price: number;
+    Qty: number;
+    CategoryId: string | null;
+    IsActive: boolean;
+    CreatedAt: string;
+    UpdatedAt: string;
+    Category: null; // Assuming Category structure is not defined
+    Vendor: null; // Assuming Vendor structure is not defined
+  }
+
+  interface OrderItem {
+    Id: string;
+    OrderId: string;
+    ProductId: string;
+    Quantity: number;
+    Price: number;
+    VendorId: string;
+    Status: string;
+    Product: Product;
+    Vendor: Vendor;
+  }
+
+  interface Customer {
+    id: string | null;
+    FirstName: string;
+    LastName: string;
+    Email: string;
+    Age: number;
+    Password: string | null;
+    Role: string;
+    Status: string | null;
+  }
+
+  interface Order {
+    Id: string;
+    CustomerId: string;
+    OrderStatus: string;
+    TotalAmount: number;
+    CreatedAt: string;
+    UpdatedAt: string;
+    OrderItems: OrderItem[];
+    Customer: Customer;
+  }
 
   //const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
@@ -18,10 +85,10 @@ const OrderManagement: React.FC = () => {
   const [oId, setOid] = useState<string>("");
   const [selectedOrderId, setSelectedOrderId] = useState<any | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<any | null>(null);
+  // const [response, setResponse] = useState<any[]>([])
 
-
+  const response: Order[] = orders
   console.log("Data : ", OrdersData);
-
 
   useEffect(() => {
     fetchOrders();
@@ -39,15 +106,49 @@ const OrderManagement: React.FC = () => {
       };
 
       const response = await axios.get(
-        "https://dev-stack-backend.onrender.com/api/v1/order/getAllOrders",
+        `${basePath}api/orders/get-all-orders`,
         { headers }
       );
 
       // Set the retrieved orders in the state
-      setOrders(response.data.data);
+      setOrders(response.data.Data);
+      updateOrderStatus(response.data.Data)
+
+
     } catch (error) {
       showErrorToast("Error fetching order data");
       console.error("Error fetching order data:", error);
+    }
+  };
+
+  const updateOrderStatus = async (orders: Order[]) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token is missing in localStorage");
+      return;
+    }
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    for (const order of orders) {
+      const allItemsDelivered = order.OrderItems.every(item => item.Status === "Ready");
+
+      if (allItemsDelivered && order.OrderStatus !== "Delivered") {
+        try {
+          await axios.put(`${basePath}api/orders/update-order-status/${order.Id}`,
+            {
+              orderStatus: "Delivered"
+            },
+            { headers }
+          );
+          // Update the local order object
+          console.log(`Order ${order.Id} status updated to Delivered`);
+          window.location.reload();
+        } catch (error) {
+          console.error(`Failed to update status for order ${order.Id}:`, error);
+        }
+      }
     }
   };
 
@@ -80,9 +181,9 @@ const OrderManagement: React.FC = () => {
     }
   };
 
-  const filteredOrders = orders.filter((order: any) =>
-    order._id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredOrders = orders.filter((order: any) =>
+  //   order._id.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   const handleChangedStatus = (order: any) => {
     setSelectedOrderId(order);
@@ -129,6 +230,7 @@ const OrderManagement: React.FC = () => {
 
   const handleEditOrderStatus = async () => {
     const Id = selectedOrderId.Id;
+    // const Id = "670019da6616fd2cade81b0f"
 
     try {
       const data = {
@@ -159,20 +261,33 @@ const OrderManagement: React.FC = () => {
 
       if (response.status === 200) {
         showSuccessToast("Status updated");
-      }
 
+        // emailjs.send('service_8relxas', 'template_uzbutlx', {
+        //   status: activeOrderStatus,
+        //   send_mail: "thanujadha20@gmail.com",
+        //   to_name: selectedOrderId.Customer.FirstName + " " + selectedOrderId.Customer.LastName,
+        //   order_no: selectedOrderId.Id,
+        //   order_total: selectedOrderId.TotalAmount
+        // }, 'nJZ8AUZgP7APdlpQW')
+        //   .then((result) => {
+        //     showSuccessToast('Email sent successfully!');
+        //   }, (error) => {
+        //     showErrorToast('Failed to send email. Please try again.');
+        //   });
+      }
+      // selectedOrderId.Customer.Email
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 4000);
     } catch (error: any) {
-      console.error("Error updating customer data:", error);
-      alert("Error updating customer data:" + error.response.data.message);
+      console.error("Error updating status data:", error);
+      alert("Error updating status data:" + error.response.data.message);
     }
   };
 
   const handleEditProductStatus = async () => {
     const Id = selectedProductId.Id;
-console.log("selectedProductStatus : ", selectedProductStatus);
+    console.log("selectedProductStatus : ", selectedProductStatus);
 
     try {
       const data = {
@@ -251,7 +366,7 @@ console.log("selectedProductStatus : ", selectedProductStatus);
                 </tr>
               </thead>
               <tbody>
-                {OrdersData.map(order => (
+                {response.map(order => (
                   <tr key={order.Id}>
                     <td>{order.Customer.FirstName} {order.Customer.LastName}</td>
                     <td>{order.Customer.Email}</td>

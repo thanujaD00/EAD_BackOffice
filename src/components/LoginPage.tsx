@@ -1,3 +1,8 @@
+//File : Login.tsx
+//Author : Wickramasinghe T.D.B
+//IT Number : IT21096570
+
+
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -64,40 +69,7 @@ const LoginPage: React.FC = () => {
 
   const googleAuth = async () => {
     alert("Error occured");
-    /*
-    try {
-      const popup = window.open(
-        "http://localhost:8090/api/v1/auth/auth/google",
-        "_blank",
-        "width=600,height=600"
-      );
 
-      const receiveMessage = (event: MessageEvent) => {
-        if (
-          event.origin === "http://localhost:8090" &&
-          event.data.token &&
-          event.data.role
-        ) {
-          const { token, role } = event.data;
-
-          localStorage.setItem("token", token);
-          localStorage.setItem("role", role);
-
-          popup?.close();
-          window.removeEventListener("message", receiveMessage);
-
-          // You can perform further actions after successful authentication,
-          // such as redirecting the user or updating the UI
-          console.log("Login successful");
-        }
-      };
-
-      window.addEventListener("message", receiveMessage);
-    } catch (error) {
-      alert("Login Unsuccessful");
-      console.log(error);
-    }
-    */
   };
 
   function handleSignUp() {

@@ -1,3 +1,7 @@
+//File : DashBoardSideBar.tsx
+//Author : Wickramasinghe T.D.B
+//IT Number : IT21096570
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,21 +21,13 @@ const DashBoardSidBar: React.FC = () => {
   };
 
   const handleInquearyManage = () => {
-    navigate("/inquaryManagement");
+    navigate("/activecustomerManagement");
   };
 
   const handleReviewManage = () => {
     navigate("/reviewManagement");
   };
-
-  const handlePaymentManage = () => {
-    navigate("/paymentManagement");
-  };
-
-  const handleReportManage = () => {
-    navigate("/orderReport");
-  };
-
+  
   const handleHomePage = () => {
     navigate("/adminHome");
   };
@@ -84,25 +80,13 @@ const DashBoardSidBar: React.FC = () => {
               className="px-4 py-2 hover:bg-gray-700 cursor-pointer"
               onClick={handleInquearyManage}
             >
-              Inqueary
+              Active User Accounts
             </li>
             <li
               className="px-4 py-2 hover:bg-gray-700 cursor-pointer"
               onClick={handleReviewManage}
             >
               Reviews
-            </li>
-            <li
-              className="px-4 py-2 hover:bg-gray-700 cursor-pointer"
-              onClick={handlePaymentManage}
-            >
-              Payments
-            </li>
-            <li
-              className="px-4 py-2 hover:bg-gray-700 cursor-pointer"
-              onClick={handleReportManage}
-            >
-              Reports
             </li>
           </ul>
         </nav>
